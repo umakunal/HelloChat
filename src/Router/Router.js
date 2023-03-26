@@ -1,11 +1,14 @@
 import {NavigationContainer} from '@react-navigation/native';
 import React from 'react';
-import AppRoutes from './AppRoutes'
+import { Auth, ChatSettings } from '../Screen';
+import AppRoutes from './AppRoutes';
 
 const MainRouter = () => {
+  const isAuth = false;
   return (
     <NavigationContainer>
-      <AppRoutes />
+      {isAuth&&<AppRoutes />}
+      {!isAuth&&<Auth />}
     </NavigationContainer>
   );
 };

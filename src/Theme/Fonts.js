@@ -1,7 +1,7 @@
 export const Fonts = {
   light: 'Roboto-Light',
   thin: 'Roboto-Thin',
-  regilar: 'Roboto-Regilar',
+  regular: 'Roboto-Regilar',
   medium: 'Roboto-Medium',
   semiBold: 'Roboto-SemiBold',
   bold: 'Roboto-Bold',
