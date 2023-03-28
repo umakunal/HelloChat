@@ -12,6 +12,9 @@ import {Fonts} from '../../Theme/Fonts';
 
 // create a component
 const CustomInput = props => {
+  const onChangeText = text => {
+    props.onInputChanged && props.onInputChanged(props.id, text);
+  };
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{props.label}</Text>
@@ -24,7 +27,7 @@ const CustomInput = props => {
             color="black"
           />
         )}
-        <TextInput style={styles.input} />
+        <TextInput {...props}  style={styles.input} onChangeText={onChangeText} />
       </View>
       {props.errorText && (
         <View style={StyleSheet.errorContainer}>
@@ -53,6 +56,7 @@ const styles = StyleSheet.create({
     // paddingVertical: verticalScale(15),
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: moderateScale(2),
   },
   icon: {
@@ -65,6 +69,7 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.regular,
     letterSpacing: 0.3,
     paddingTop: 0,
+    // backgroundColor:'red'
   },
   errorContainer: {
     marginVertical: verticalScale(5),
