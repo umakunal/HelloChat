@@ -8,10 +8,17 @@ import SubmitButton from '../SubmitButton';
 import {verticalScale} from '../../Theme/Dimentions';
 import {validateInput} from '../../Utils/Action/FormAction';
 import {reducer} from '../../Utils/Reducer/FormReducer';
+import {signUp} from '../../Utils/Action/AuthActions';
+
 
 // create a component
-
 const initialState = {
+  inputValues: {
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+  },
   inputValidities: {
     firstName: false,
     lastName: false,
@@ -25,10 +32,19 @@ const SignUpForm = () => {
   const inputChangedHandler = useCallback(
     (inputId, inputValue) => {
       const result = validateInput(inputId, inputValue);
-      dispatchFormState({inputId, validationResult: result});
+      dispatchFormState({inputId, validationResult: result, inputValue});
     },
     [dispatchFormState],
   );
+
+  const AuthHandler = () => {
+    signUp(
+      FormState.inputValues.firstName,
+      FormState.inputValues.lastName,
+      FormState.inputValues.email,
+      FormState.inputValues.password,
+    );
+  };
   return (
     <>
       <CustomInput
@@ -74,7 +90,7 @@ const SignUpForm = () => {
         style={{marginTop: verticalScale(20)}}
         title="Sign up"
         onPress={() => {
-          console.log('Button Pressed');
+          AuthHandler();
         }}
       />
     </>
