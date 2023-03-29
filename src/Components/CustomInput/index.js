@@ -31,7 +31,7 @@ const CustomInput = props => {
       </View>
       {props.errorText && (
         <View style={StyleSheet.errorContainer}>
-          <Text style={styles.errorText}>{props.errorText}</Text>
+          <Text style={styles.errorText}>{props.errorText[0]}</Text>
         </View>
       )}
     </View>

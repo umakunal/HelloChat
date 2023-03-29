@@ -1,5 +1,5 @@
 //import liraries
-import React, {Component} from 'react';
+import React, {Component, useCallback, useReducer} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import CustomInput from '../CustomInput';
 import Feather from 'react-native-vector-icons/Feather';
@@ -10,11 +10,24 @@ import {
   validatePassword,
 } from '../../Utils/ValidationConstraints';
 import {validateInput} from '../../Utils/Action/FormAction';
+import {reducer} from '../../Utils/Reducer/FormReducer';
 // create a component
+const initialState = {
+  inputValidities: {
+    email: false,
+    password: false,
+  },
+  formIsValid: false,
+};
 const SignInForm = () => {
-  const inputChangedHandler = (inputId, inputValue) => {
-    console.log(validateInput(inputId, inputValue));
-  };
+  const [FormState, dispatchFormState] = useReducer(reducer, initialState);
+  const inputChangedHandler = useCallback(
+    (inputId, inputValue) => {
+      const result = validateInput(inputId, inputValue);
+      dispatchFormState({inputId, validationResult: result});
+    },
+    [dispatchFormState],
+  );
   return (
     <>
       <CustomInput
@@ -25,7 +38,7 @@ const SignInForm = () => {
         keyboardType="email-address"
         autoCapitalize="none"
         onInputChanged={inputChangedHandler}
-        //   errorText={'Some Error Text'}
+        errorText={FormState.inputValidities['email']}
       />
       <CustomInput
         id="password"
@@ -35,10 +48,10 @@ const SignInForm = () => {
         secureTextEntry
         autoCapitalize="none"
         onInputChanged={inputChangedHandler}
-        //   errorText={'Some Error Text'}
+          errorText={FormState.inputValidities['password']}
       />
       <SubmitButton
-        // disabled={true}
+        disabled={!FormState.formIsValid}
         style={{marginTop: verticalScale(20)}}
         title="Sign in"
         onPress={() => {
