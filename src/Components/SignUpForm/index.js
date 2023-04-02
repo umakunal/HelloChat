@@ -1,6 +1,6 @@
 //import liraries
-import React, {useCallback, useReducer} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import React, {useCallback, useEffect, useReducer, useState} from 'react';
+import {View, Text, StyleSheet, Alert, ActivityIndicator} from 'react-native';
 import CustomInput from '../CustomInput';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
@@ -9,7 +9,7 @@ import {verticalScale} from '../../Theme/Dimentions';
 import {validateInput} from '../../Utils/Action/FormAction';
 import {reducer} from '../../Utils/Reducer/FormReducer';
 import {signUp} from '../../Utils/Action/AuthActions';
-
+import { COLORS } from '../../Theme/Colors';
 
 // create a component
 const initialState = {
@@ -28,6 +28,8 @@ const initialState = {
   formIsValid: false,
 };
 const SignUpForm = () => {
+  const [Error, setError] = useState('');
+  const [Loading, setLoading] = useState(false);
   const [FormState, dispatchFormState] = useReducer(reducer, initialState);
   const inputChangedHandler = useCallback(
     (inputId, inputValue) => {
@@ -37,13 +39,25 @@ const SignUpForm = () => {
     [dispatchFormState],
   );
 
-  const AuthHandler = () => {
-    signUp(
-      FormState.inputValues.firstName,
-      FormState.inputValues.lastName,
-      FormState.inputValues.email,
-      FormState.inputValues.password,
-    );
+  useEffect(() => {
+    if (Error) {
+      Alert.alert('An error occured', Error, [{text: 'Okay'}]);
+    }
+  }, [Error]);
+
+  const AuthHandler = async () => {
+    try {
+      setLoading(true);
+      await signUp(
+        FormState.inputValues.firstName,
+        FormState.inputValues.lastName,
+        FormState.inputValues.email,
+        FormState.inputValues.password,
+      );
+    } catch (error) {
+      setError(error.message);
+      setLoading(false);
+    }
   };
   return (
     <>
@@ -85,14 +99,22 @@ const SignUpForm = () => {
         onInputChanged={inputChangedHandler}
         errorText={FormState.inputValidities['password']}
       />
-      <SubmitButton
-        disabled={!FormState.formIsValid}
-        style={{marginTop: verticalScale(20)}}
-        title="Sign up"
-        onPress={() => {
-          AuthHandler();
-        }}
-      />
+         {Loading ? (
+        <ActivityIndicator
+          size={'small'}
+          color={COLORS.primary}
+          style={{marginTop: verticalScale(10)}}
+        />
+      ) : (
+        <SubmitButton
+          disabled={!FormState.formIsValid}
+          style={{marginTop: verticalScale(20)}}
+          title="Sign up"
+          onPress={() => {
+            AuthHandler();
+          }}
+        />
+      )}
     </>
   );
 };

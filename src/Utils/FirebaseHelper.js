@@ -6,12 +6,13 @@ import {initializeApp} from 'firebase/app';
 export const getFirebaseApp = () => {
   // Your web app's Firebase configuration
   const firebaseConfig = {
-    apiKey: 'AIzaSyB85DITREzrG_d7OPx4zxWWp3AjLkBGcus',
-    authDomain: 'hellochat-42843.firebaseapp.com',
-    projectId: 'hellochat-42843',
-    storageBucket: 'hellochat-42843.appspot.com',
-    messagingSenderId: '176276638006',
-    appId: '1:176276638006:web:079eda116bd06f90068b97',
+    apiKey: "AIzaSyAxfu276iUAqC0_WtDLik7xpb4eDzncBqY",
+    authDomain: "hellochat-c8949.firebaseapp.com",
+    projectId: "hellochat-c8949",
+    storageBucket: "hellochat-c8949.appspot.com",
+    messagingSenderId: "689186904033",
+    appId: "1:689186904033:web:b897b7e9948c0b121224a0",
+    measurementId: "G-KQRZXQFYD0"
   };
 
   // Initialize Firebase
