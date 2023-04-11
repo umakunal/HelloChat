@@ -7,12 +7,14 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "clear": "watchman watch-del-all && rm -rf node_modules/ && yarn install && react-native start --reset-cache"
   },
   "dependencies": {
     "@react-navigation/bottom-tabs": "^6.5.7",
     "@react-navigation/native": "^6.1.6",
     "@react-navigation/native-stack": "^6.9.12",
+    "@reduxjs/toolkit": "^1.9.3",
     "firebase": "^9.18.0",
     "react": "18.1.0",
     "react-native": "0.70.7",
@@ -20,6 +22,7 @@
     "react-native-safe-area-context": "^4.5.0",
     "react-native-screens": "^3.20.0",
     "react-native-vector-icons": "^9.2.0",
+    "react-redux": "^8.0.5",
     "validate.js": "^0.13.1"
   },
   "devDependencies": {

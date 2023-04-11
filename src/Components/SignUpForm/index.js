@@ -9,7 +9,8 @@ import {verticalScale} from '../../Theme/Dimentions';
 import {validateInput} from '../../Utils/Action/FormAction';
 import {reducer} from '../../Utils/Reducer/FormReducer';
 import {signUp} from '../../Utils/Action/AuthActions';
-import { COLORS } from '../../Theme/Colors';
+import {COLORS} from '../../Theme/Colors';
+import {useDispatch, useSelector} from 'react-redux';
 
 // create a component
 const initialState = {
@@ -28,6 +29,7 @@ const initialState = {
   formIsValid: false,
 };
 const SignUpForm = () => {
+  const dispatch = useDispatch();
   const [Error, setError] = useState('');
   const [Loading, setLoading] = useState(false);
   const [FormState, dispatchFormState] = useReducer(reducer, initialState);
@@ -48,12 +50,13 @@ const SignUpForm = () => {
   const AuthHandler = async () => {
     try {
       setLoading(true);
-      await signUp(
+      const action = signUp(
         FormState.inputValues.firstName,
         FormState.inputValues.lastName,
         FormState.inputValues.email,
         FormState.inputValues.password,
       );
+      dispatch(action);
     } catch (error) {
       setError(error.message);
       setLoading(false);
@@ -99,7 +102,7 @@ const SignUpForm = () => {
         onInputChanged={inputChangedHandler}
         errorText={FormState.inputValidities['password']}
       />
-         {Loading ? (
+      {Loading ? (
         <ActivityIndicator
           size={'small'}
           color={COLORS.primary}
