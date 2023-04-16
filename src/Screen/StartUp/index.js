@@ -6,7 +6,8 @@ import CommonStyle from '../../Constants/CommonStyle';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {async} from 'validate.js';
 import {useDispatch} from 'react-redux';
-import {setDidTryAutoLogin} from '../../store/authSlice';
+import {authenticate, setDidTryAutoLogin} from '../../store/authSlice';
+import {getUserDate} from '../../Utils/Action/userAction';
 
 // create a component
 const StartUp = () => {
@@ -20,6 +21,19 @@ const StartUp = () => {
         dispatch(setDidTryAutoLogin());
         return;
       }
+      console.log('storedAuthInfo', storedAuthInfo);
+      const parseData = JSON.parse(storedAuthInfo);
+      console.log('parseData', parseData);
+      const {token, userId, expiryDate: expiryDateString} = parseData;
+      const expiryDate = new Date(expiryDateString);
+      console.log('expiryDate', expiryDate);
+      if (expiryDate <= new Date() || !token || !userId) {
+        dispatch(setDidTryAutoLogin());
+        return;
+      }
+      const userData = await getUserDate(userId);
+      console.log('getUserData==>', userData);
+      dispatch(authenticate({token: token, userData}));
     };
     tryLogin();
   }, []);

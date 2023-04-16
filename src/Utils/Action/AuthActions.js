@@ -20,8 +20,9 @@ export const signUp = (firstName, lastName, email, password) => {
       const expiryDate = new Date(expirationTime);
       const userData = await createUser(firstName, lastName, email, uid);
       dispatch(authenticate({token: accessToken, userData}));
-      saveDateToStorage(accessToken, uid, expiryDate);
       console.log('UserData===>', userData);
+      console.log('store UserData===>', accessToken, uid, expiryDate);
+      saveDateToStorage(accessToken, uid, expiryDate);
     } catch (error) {
       const errorCode = error.code;
       let message = 'Something went wrong!';
@@ -55,7 +56,7 @@ const saveDateToStorage = (token, userId, expiryDate) => {
     JSON.stringify({
       token,
       userId,
-      expiryDate: expiryDate.toISOString,
+      expiryDate,
     }),
   );
 };
