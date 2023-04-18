@@ -16,7 +16,6 @@ const authSlice = createSlice({
     },
     setDidTryAutoLogin: (state, action) => {
       state.setDidTryAutoLogin = true;
-      console.log('AuthState====>', state);
     },
   },
 });

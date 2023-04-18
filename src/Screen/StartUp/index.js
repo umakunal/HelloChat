@@ -7,7 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {async} from 'validate.js';
 import {useDispatch} from 'react-redux';
 import {authenticate, setDidTryAutoLogin} from '../../store/authSlice';
-import {getUserDate} from '../../Utils/Action/userAction';
+import {getUserData} from '../../Utils/Action/userAction';
 
 // create a component
 const StartUp = () => {
@@ -31,7 +31,7 @@ const StartUp = () => {
         dispatch(setDidTryAutoLogin());
         return;
       }
-      const userData = await getUserDate(userId);
+      const userData = await getUserData(userId);
       console.log('getUserData==>', userData);
       dispatch(authenticate({token: token, userData}));
     };

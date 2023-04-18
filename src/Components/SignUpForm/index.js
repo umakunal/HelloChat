@@ -47,7 +47,7 @@ const SignUpForm = () => {
     }
   }, [Error]);
 
-  const AuthHandler = async () => {
+  const AuthHandler = useCallback(async () => {
     try {
       setLoading(true);
       const action = signUp(
@@ -61,7 +61,7 @@ const SignUpForm = () => {
       setError(error.message);
       setLoading(false);
     }
-  };
+  }, [dispatch, FormState]);
   return (
     <>
       <CustomInput

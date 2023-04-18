@@ -1,7 +1,7 @@
 import {child, get, getDatabase, ref} from 'firebase/database';
 import {getFirebaseApp} from '../FirebaseHelper';
 
-export const getUserDate = async userId => {
+export const getUserData = async userId => {
   try {
     const app = getFirebaseApp();
     const dbRef = ref(getDatabase(app));

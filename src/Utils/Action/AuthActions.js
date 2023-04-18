@@ -1,10 +1,16 @@
 import {getFirebaseApp} from '../FirebaseHelper';
-import {createUserWithEmailAndPassword, getAuth} from 'firebase/auth';
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
 import {child, getDatabase, ref, set} from 'firebase/database';
 import {authenticate} from '../../store/authSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {getUserData} from './userAction';
 
 export const signUp = (firstName, lastName, email, password) => {
+  console.log('SignUp Data', firstName, lastName, email, password);
   return async dispatch => {
     const app = getFirebaseApp();
     const auth = getAuth(app);
@@ -31,6 +37,32 @@ export const signUp = (firstName, lastName, email, password) => {
       }
       throw new Error(message);
       // console.log('Error while creating user with firebase', error.code);
+    }
+  };
+};
+export const signIn = (email, password) => {
+  console.log('email from signin page', email);
+  console.log('password from signin page', password);
+  return async dispatch => {
+    const app = getFirebaseApp();
+    const auth = getAuth(app);
+
+    try {
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      const {uid, stsTokenManager} = result.user;
+      const {accessToken, expirationTime} = stsTokenManager;
+      const expiryDate = new Date(expirationTime);
+      const userData = await getUserData(uid);
+      dispatch(authenticate({token: accessToken, userData}));
+      saveDateToStorage(accessToken, uid, expiryDate);
+    } catch (error) {
+      const errorCode = error.code;
+      let message = 'Something went wrong!';
+      if (errorCode === 'auth/email-already-in-use') {
+        message = 'This email is already in use';
+      }
+      console.log('Error while logging in  user with firebase', error.code);
+      throw new Error(message);
     }
   };
 };

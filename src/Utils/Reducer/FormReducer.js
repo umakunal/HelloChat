@@ -17,6 +17,7 @@ export const reducer = (state, action) => {
       break;
     }
   }
+  console.log('updated State', state);
   return {
     inputValidities: updatedValidities,
     formIsValid: updatedFormIsValid,
