@@ -5,10 +5,11 @@ import {
   signInWithEmailAndPassword,
 } from 'firebase/auth';
 import {child, getDatabase, ref, set} from 'firebase/database';
-import {authenticate} from '../../store/authSlice';
+import {authenticate, logout} from '../../store/authSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {getUserData} from './userAction';
 
+let timer;
 export const signUp = (firstName, lastName, email, password) => {
   console.log('SignUp Data', firstName, lastName, email, password);
   return async dispatch => {
@@ -24,11 +25,15 @@ export const signUp = (firstName, lastName, email, password) => {
       const {uid, stsTokenManager} = result.user;
       const {accessToken, expirationTime} = stsTokenManager;
       const expiryDate = new Date(expirationTime);
+      const timeNow = new Date();
+      const milisecondUntilExpiry = expiryDate - timeNow;
       const userData = await createUser(firstName, lastName, email, uid);
       dispatch(authenticate({token: accessToken, userData}));
-      console.log('UserData===>', userData);
-      console.log('store UserData===>', accessToken, uid, expiryDate);
       saveDateToStorage(accessToken, uid, expiryDate);
+
+      timer = setTimeout(() => {
+        dispatch(userLogout());
+      }, milisecondUntilExpiry);
     } catch (error) {
       const errorCode = error.code;
       let message = 'Something went wrong!';
@@ -38,6 +43,14 @@ export const signUp = (firstName, lastName, email, password) => {
       throw new Error(message);
       // console.log('Error while creating user with firebase', error.code);
     }
+  };
+};
+
+export const userLogout = () => {
+  return async dispatch => {
+    AsyncStorage.clear();
+    clearTimeout(timer);
+    dispatch(logout());
   };
 };
 export const signIn = (email, password) => {
@@ -52,16 +65,24 @@ export const signIn = (email, password) => {
       const {uid, stsTokenManager} = result.user;
       const {accessToken, expirationTime} = stsTokenManager;
       const expiryDate = new Date(expirationTime);
+      const timeNow = new Date();
+      const milisecondUntilExpiry = expiryDate - timeNow;
       const userData = await getUserData(uid);
       dispatch(authenticate({token: accessToken, userData}));
       saveDateToStorage(accessToken, uid, expiryDate);
+      timer = setTimeout(() => {
+        dispatch(userLogout());
+      }, milisecondUntilExpiry);
     } catch (error) {
       const errorCode = error.code;
       let message = 'Something went wrong!';
-      if (errorCode === 'auth/email-already-in-use') {
-        message = 'This email is already in use';
+      if (
+        errorCode === 'auth/wrong-password' ||
+        errorCode === 'auth/user-not-found'
+      ) {
+        message = 'The email or password was incorrect';
       }
-      console.log('Error while logging in  user with firebase', error.code);
+      console.log('Error while logging in  user with firebase', message);
       throw new Error(message);
     }
   };

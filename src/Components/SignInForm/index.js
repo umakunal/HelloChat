@@ -21,16 +21,17 @@ import {signIn} from '../../Utils/Action/AuthActions';
 import {useDispatch} from 'react-redux';
 import {COLORS} from '../../Theme/Colors';
 // create a component
+const isTestMode = true;
 const initialState = {
   inputValues: {
-    email: '',
-    password: '',
+    email: isTestMode ? 'samratkunal@mail.com' : '',
+    password: isTestMode ? '123456' : '',
   },
   inputValidities: {
-    email: false,
-    password: false,
+    email: isTestMode,
+    password: isTestMode,
   },
-  formIsValid: false,
+  formIsValid: isTestMode,
 };
 const SignInForm = () => {
   const dispatch = useDispatch();
@@ -57,12 +58,13 @@ const SignInForm = () => {
         FormState.inputValues.email,
         FormState.inputValues.password,
       );
-      dispatch(action);
+      setError('');
+      await dispatch(action);
     } catch (error) {
       setError(error.message);
       setLoading(false);
     }
-  }, [dispatch,FormState]);
+  }, [dispatch, FormState]);
 
   return (
     <>
@@ -73,6 +75,7 @@ const SignInForm = () => {
         iconPack={Feather}
         keyboardType="email-address"
         autoCapitalize="none"
+        value={FormState.inputValues.email}
         onInputChanged={inputChangedHandler}
         errorText={FormState.inputValidities['email']}
       />
@@ -83,6 +86,7 @@ const SignInForm = () => {
         iconPack={Feather}
         secureTextEntry
         autoCapitalize="none"
+        value={FormState.inputValues.password}
         onInputChanged={inputChangedHandler}
         errorText={FormState.inputValidities['password']}
       />
