@@ -23,9 +23,13 @@ const authSlice = createSlice({
       state.userData = null;
       state.setDidTryAutoLogin = false;
     },
+    updateLoggrdInUserData: (state, action) => {
+      state.userData = {...state.userData, ...action.payload.newData};
+    },
   },
 });
 
+export const updateLoggrdInUserData = authSlice.actions.updateLoggrdInUserData;
 export const logout = authSlice.actions.logout;
 export const authenticate = authSlice.actions.authenticate;
 export const setDidTryAutoLogin = authSlice.actions.setDidTryAutoLogin;

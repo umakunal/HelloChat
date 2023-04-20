@@ -10,7 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // create a component
 LogBox.ignoreLogs(['AsyncStorage has been extracted from react-native']);
-AsyncStorage.clear();
+// AsyncStorage.clear();
 const App = () => {
   useEffect(() => {
     RNBootSplash.hide({fade: true});

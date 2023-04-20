@@ -1,5 +1,5 @@
 import {validate} from 'validate.js';
-//Validating Firstname and Lastname
+//Validating Firstname Lastname and about
 export const validateString = (id, value) => {
   const constraints = {
     presence: {allowEmpty: false},
@@ -10,6 +10,22 @@ export const validateString = (id, value) => {
       flags: 'i',
       message: 'value can only contain letters',
     };
+  }
+  const validationResult = validate({[id]: value}, {[id]: constraints});
+  return validationResult && validationResult[id];
+};
+export const validateLength = (id, value, minLength, maxLength, allowEmpty) => {
+  const constraints = {
+    presence: {allowEmpty},
+  };
+  if (!allowEmpty || value !== '') {
+    constraints.length = {};
+    if (minLength !== null) {
+      constraints.length.minimum = minLength;
+    }
+    if (maxLength !== null) {
+      constraints.length.maximum = maxLength;
+    }
   }
   const validationResult = validate({[id]: value}, {[id]: constraints});
   return validationResult && validationResult[id];

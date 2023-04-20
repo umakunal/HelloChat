@@ -10,7 +10,8 @@ import Zocial from 'react-native-vector-icons/Zocial';
 const TabRoutes = () => {
   const Tab = createBottomTabNavigator();
   return (
-    <Tab.Navigator screenOptions={{headerTitle: ''}}>
+    <Tab.Navigator
+      screenOptions={{headerTitle: '', headerShadowVisible: false}}>
       <Tab.Screen
         name={ScreenName.chatList}
         component={ChatList}

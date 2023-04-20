@@ -1,5 +1,5 @@
 //import liraries
-import React, {Component} from 'react';
+import React, {Component, useState} from 'react';
 import {View, Text, StyleSheet, TextInput} from 'react-native';
 import {COLORS} from '../../Theme/Colors';
 import {
@@ -12,7 +12,9 @@ import {Fonts} from '../../Theme/Fonts';
 
 // create a component
 const CustomInput = props => {
+  const [Value, setValue] = useState(props.initialValue);
   const onChangeText = text => {
+    setValue(text);
     props.onInputChanged && props.onInputChanged(props.id, text);
   };
   return (
@@ -27,7 +29,12 @@ const CustomInput = props => {
             color="black"
           />
         )}
-        <TextInput {...props}  style={styles.input} onChangeText={onChangeText} />
+        <TextInput
+          {...props}
+          value={Value}
+          style={styles.input}
+          onChangeText={onChangeText}
+        />
       </View>
       {props.errorText && (
         <View style={StyleSheet.errorContainer}>

@@ -75,7 +75,7 @@ const SignInForm = () => {
         iconPack={Feather}
         keyboardType="email-address"
         autoCapitalize="none"
-        value={FormState.inputValues.email}
+        initialValue={FormState.inputValues.email}
         onInputChanged={inputChangedHandler}
         errorText={FormState.inputValidities['email']}
       />
@@ -86,7 +86,7 @@ const SignInForm = () => {
         iconPack={Feather}
         secureTextEntry
         autoCapitalize="none"
-        value={FormState.inputValues.password}
+        initialValue={FormState.inputValues.password}
         onInputChanged={inputChangedHandler}
         errorText={FormState.inputValidities['password']}
       />
