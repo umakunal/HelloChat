@@ -1,5 +1,13 @@
 import {Platform, PermissionsAndroid} from 'react-native';
 import * as ImagePicker from 'react-native-image-crop-picker';
+import {getFirebaseApp} from './FirebaseHelper';
+import uuid from 'react-native-uuid';
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from 'firebase/storage';
 
 export const launchImagePicker = async () => {
   await checkMediaPermission();
@@ -9,9 +17,9 @@ export const launchImagePicker = async () => {
     height: 400,
     compressImageQuality: 0.8,
   }).then(image => {
+    console.log('Selected Image===>', image);
     return image;
   });
-  console.log('Selected Image===>', result);
   return result.path;
 };
 
@@ -37,4 +45,34 @@ const checkMediaPermission = async () => {
       return Promise.reject();
     }
   }
+};
+
+export const uploadImageAsync = async uri => {
+  // console.log('Image uri', uri);
+  let Imageuri = uri;
+  const filename = Imageuri.substring(Imageuri.lastIndexOf('/') + 1);
+  const uploadUri =
+    Platform.OS === 'ios' ? Imageuri.replace('file://', '') : Imageuri;
+ 
+  // return;
+  const app = getFirebaseApp();
+  const blob = await new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+      resolve(xhr.response);
+    };
+    xhr.onerror = function (e) {
+      console.log('Error occured while uploading image to firebase==>', e);
+      reject(new TypeError('Network request failed.'));
+    };
+
+    xhr.responseType = 'blob';
+    xhr.open('GET', Imageuri, true);
+    xhr.send(null);
+  });
+  const pathFolder = 'profilePics';
+  const StorageRef = ref(getStorage(app), `${pathFolder}/${uuid.v4()}`);
+  await uploadBytesResumable(StorageRef, blob);
+  blob.close();
+  return await getDownloadURL(StorageRef);
 };

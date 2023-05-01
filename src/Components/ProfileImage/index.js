@@ -1,43 +1,80 @@
 //import liraries
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import {ImagePath} from '../../Theme/ImagePath';
 import {moderateScale, verticalScale} from '../../Theme/Dimentions';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {COLORS} from '../../Theme/Colors';
-import {launchImagePicker} from '../../Utils/ImagePickerHelper';
+import {
+  launchImagePicker,
+  uploadImageAsync,
+} from '../../Utils/ImagePickerHelper';
 import {useState} from 'react';
+import {updateSignedInUserData} from '../../Utils/Action/AuthActions';
+import {useDispatch} from 'react-redux';
+import {updateLoggrdInUserData} from '../../store/authSlice';
 // create a component
 const ProfileImage = props => {
+  const dispatch = useDispatch();
   const source = props.uri ? {uri: props.uri} : ImagePath.emptyImage;
   const [ImageData, setImageData] = useState(source);
+  const [IsLoading, setIsLoading] = useState(false);
+  const userId = props.userId;
+
+  console.log('userID', userId);
   const pickImage = async () => {
+    setIsLoading(true);
     try {
-      const tempUrl = await launchImagePicker();
-      if (!tempUrl) return;
-
+      const tempUri = await launchImagePicker();
+      console.log('tempUri', tempUri);
+      if (!tempUri) return;
       //Upload the Image
+      const uploadUrl = await uploadImageAsync(tempUri);
 
-      // Set the Image
-      setImageData({uri:tempUrl})
+      if (!uploadUrl || uploadUrl == undefined) {
+        throw new Error('Could not upload image!!!');
+      }
+      const newData = {profilePicture: uploadUrl};
+      await updateSignedInUserData(userId, newData);
+      dispatch(updateLoggrdInUserData({newData}));
+      setImageData({uri: uploadUrl});
+      setIsLoading(false);
     } catch (error) {
-      console.log('error fetching image', error)
+      setIsLoading(false);
+      console.log('error fetching image', error);
     }
   };
   return (
     <View style={styles.container}>
-      <Image
-        source={ImageData}
-        style={{
-          ...styles.profilePic,
-          ...{
-            height: props.height,
-            width: props.width,
-            borderRadius: props.borderRadius,
-          },
-        }}
-      />
-      <TouchableOpacity onPress={pickImage} style={styles.edit}>
+      {IsLoading ? (
+        <View
+          style={[
+            styles.loderView,
+            {height: props.height, width: props.width},
+          ]}>
+          <ActivityIndicator size={'small'} color={COLORS.primary} />
+        </View>
+      ) : (
+        <Image
+          source={ImageData}
+          style={{
+            ...styles.profilePic,
+            ...{
+              height: props.height,
+              width: props.width,
+              borderRadius: props.borderRadius,
+            },
+          }}
+        />
+      )}
+      <TouchableOpacity  onPress={pickImage} style={styles.edit}>
         <Entypo name="edit" size={18} color={COLORS.primary} />
       </TouchableOpacity>
     </View>
@@ -73,6 +110,10 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
 
     elevation: 5,
+  },
+  loderView: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

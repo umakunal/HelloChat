@@ -90,6 +90,8 @@ const Settings = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.formContainer}>
         <ProfileImage
+          userId={userData.userId}
+          uri={userData.profilePicture}
           height={moderateScale(80)}
           width={moderateScale(80)}
           borderRadius={moderateScale(50)}
