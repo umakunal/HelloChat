@@ -1,12 +1,30 @@
 //import liraries
-import React, {Component} from 'react';
+import React, {useEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {View, Text, StyleSheet, Button} from 'react-native';
 import {ScreenName} from '../../Constants/ScreenName';
+import {HeaderButtons, Item} from 'react-navigation-header-buttons';
+import CustomHeaderButton from '../../Components/CustomHeaderButton';
 
 // create a component
-const ChatList = () => {
+const ChatList = (props) => {
   const navigation = useNavigation();
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+          <Item
+            title="New Chat"
+            iconName="create-outline"
+            onPress={() => {
+              props.navigation.navigate(ScreenName.newChat);
+            }}
+          />
+        </HeaderButtons>
+      ),
+    });
+  }, []);
+
   return (
     <View style={styles.container}>
       <Text>ChatList</Text>

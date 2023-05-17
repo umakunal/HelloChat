@@ -1,4 +1,3 @@
-//import liraries
 import React, {Component} from 'react';
 import {
   View,
@@ -20,102 +19,91 @@ import {useState} from 'react';
 import {updateSignedInUserData} from '../../Utils/Action/AuthActions';
 import {useDispatch} from 'react-redux';
 import {updateLoggrdInUserData} from '../../store/authSlice';
-// create a component
+
 const ProfileImage = props => {
   const dispatch = useDispatch();
+
   const source = props.uri ? {uri: props.uri} : ImagePath.emptyImage;
-  const [ImageData, setImageData] = useState(source);
-  const [IsLoading, setIsLoading] = useState(false);
+
+  const [image, setImage] = useState(source);
+  const [isLoading, setIsLoading] = useState(false);
+  const showEditButton = props.showEditButton && props.showEditButton === true;
+
   const userId = props.userId;
 
-  console.log('userID', userId);
   const pickImage = async () => {
-    setIsLoading(true);
     try {
       const tempUri = await launchImagePicker();
-      console.log('tempUri', tempUri);
-      if (!tempUri) return;
-      //Upload the Image
-      const uploadUrl = await uploadImageAsync(tempUri);
 
-      if (!uploadUrl || uploadUrl == undefined) {
-        throw new Error('Could not upload image!!!');
+      if (!tempUri) return;
+
+      // Upload the image
+      setIsLoading(true);
+      const uploadUrl = await uploadImageAsync(tempUri);
+      setIsLoading(false);
+
+      if (!uploadUrl) {
+        throw new Error('Could not upload image');
       }
+
       const newData = {profilePicture: uploadUrl};
+
       await updateSignedInUserData(userId, newData);
       dispatch(updateLoggrdInUserData({newData}));
-      setImageData({uri: uploadUrl});
-      setIsLoading(false);
+
+      setImage({uri: uploadUrl});
     } catch (error) {
+      console.log(error);
       setIsLoading(false);
-      console.log('error fetching image', error);
     }
   };
+
+  const Container = showEditButton ? TouchableOpacity : View;
+
   return (
-    <View style={styles.container}>
-      {IsLoading ? (
+    <Container onPress={pickImage}>
+      {isLoading ? (
         <View
-          style={[
-            styles.loderView,
-            {height: props.height, width: props.width},
-          ]}>
+          height={props.size}
+          width={props.size}
+          style={styles.loadingContainer}>
           <ActivityIndicator size={'small'} color={COLORS.primary} />
         </View>
       ) : (
         <Image
-          source={ImageData}
-          style={{
-            ...styles.profilePic,
-            ...{
-              height: props.height,
-              width: props.width,
-              borderRadius: props.borderRadius,
-            },
-          }}
+          style={{...styles.image, ...{width: props.size, height: props.size}}}
+          source={image}
         />
       )}
-      <TouchableOpacity  onPress={pickImage} style={styles.edit}>
-        <Entypo name="edit" size={18} color={COLORS.primary} />
-      </TouchableOpacity>
-    </View>
+
+      {showEditButton && !isLoading && (
+        <View style={styles.editIconContainer}>
+          <Entypo name="edit" size={18} color={COLORS.primary} />
+        </View>
+      )}
+    </Container>
   );
 };
 
-// define your styles
 const styles = StyleSheet.create({
-  container: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
+  image: {
+    borderRadius: 50,
+    borderColor: COLORS.grey,
+    borderWidth: 1,
     marginVertical: verticalScale(10),
   },
-  profilePic: {
-    resizeMode: 'cover',
-    borderWidth: 1,
-    borderColor: COLORS.lightGrey,
-  },
-  edit: {
+  editIconContainer: {
     position: 'absolute',
-    bottom: -10,
-    right: -10,
-    backgroundColor: COLORS.white,
-    borderRadius: moderateScale(20),
-    padding: moderateScale(8),
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-
-    elevation: 5,
+    bottom: 0,
+    right: 0,
+    backgroundColor: COLORS.lightGrey,
+    borderRadius: 20,
+    padding: 8,
   },
-  loderView: {
+  loadingContainer: {
     justifyContent: 'center',
     alignItems: 'center',
   },
 });
 
-//make this component available to the app
 export default ProfileImage;

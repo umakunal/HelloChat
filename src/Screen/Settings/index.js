@@ -90,12 +90,12 @@ const Settings = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.formContainer}>
         <ProfileImage
+          size={80}
           userId={userData.userId}
           uri={userData.profilePicture}
-          height={moderateScale(80)}
-          width={moderateScale(80)}
-          borderRadius={moderateScale(50)}
+          showEditButton = {true}
         />
+
         <CustomInput
           id="firstName"
           initialValue={userData.firstName}
