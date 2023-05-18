@@ -20,10 +20,15 @@ import {
 } from '../../Theme/Dimentions';
 import {ImagePath} from '../../Theme/ImagePath';
 import {COLORS} from '../../Theme/Colors';
+import {useSelector} from 'react-redux';
 
 // create a component
-const Chat = () => {
+const Chat = props => {
   const [MessageText, setMessageText] = useState('');
+  const storedUsers = useSelector(state => state.users.storedUsers);
+  console.log('storedUsers', storedUsers)
+  const chatData = props.route?.params?.newChatData;
+  console.log('ChatData', chatData);
 
   const sendMessage = useCallback(() => {
     setMessageText('');

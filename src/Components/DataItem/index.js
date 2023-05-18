@@ -12,12 +12,13 @@ import {Fonts} from '../../Theme/Fonts';
 
 // create a component
 const DataItem = props => {
-  const {title, subTitle, image} = props;
-  console.log('Image uri', image)
+  const {title, subTitle, image, onPress} = props;
+  console.log('Image uri', image);
   return (
     <TouchableWithoutFeedback
-    //  style={styles.container}
-    >
+      onPress={() => {
+        onPress();
+      }}>
       <View style={styles.container}>
         <ProfileImage uri={image} size={40} />
         <View style={styles.textContainer}>
@@ -44,7 +45,7 @@ const styles = StyleSheet.create({
     minHeight: verticalScale(50),
   },
   textContainer: {
-    marginLeft: horizontalScale(14 ),
+    marginLeft: horizontalScale(14),
   },
   title: {
     fontFamily: Fonts.medium,
