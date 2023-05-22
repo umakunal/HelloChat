@@ -13,4 +13,5 @@ export const COLORS = {
   grey: '#7f8c8d',
   nearlyWhite: '#f4f8f7',
   textColor: '#1c1e21',
+  beige: '#FEF5C3',
 };
