@@ -64,7 +64,7 @@ const ChatList = props => {
           const otherUser = storedUsers[otherUserID];
           if (!otherUser) return;
           const title = `${otherUser?.firstName} ${otherUser?.lastName}`;
-          const subTitle = 'This will be a message...';
+          const subTitle = chatData.latestMessagetText || 'New Chat';
           const image = otherUser?.profilePicture;
           console.log('chatId', chatId);
           return (

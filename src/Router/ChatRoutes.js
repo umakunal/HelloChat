@@ -11,6 +11,7 @@ import {ActivityIndicatorBase, View} from 'react-native';
 import {COLORS} from '../Theme/Colors';
 import CommonStyle from '../Constants/CommonStyle';
 import {setStoredUsers} from '../store/userSlice';
+import {setChatsMessages} from '../store/messagesSlice';
 
 const ChatRoutes = () => {
   const Stack = createNativeStackNavigator();
@@ -44,20 +45,27 @@ const ChatRoutes = () => {
             data.key = chatSnapshot.key;
             data.users.forEach(userId => {
               if (storedUsers[userId]) return;
-              const userRef = child(dbRef, `user/${userId}`); 
+              const userRef = child(dbRef, `user/${userId}`);
               get(userRef).then(userSnapShot => {
                 const userSnapshotData = userSnapShot.val();
-                console.log('userSnapshotData========>', userSnapshotData)
+                console.log('userSnapshotData========>', userSnapshotData);
                 dispatch(setStoredUsers({newUsers: {userSnapshotData}}));
               });
               refs.push(userRef);
-            }); 
+            });
             chatsData[chatSnapshot.key] = data;
             if (chatFoundCount >= chatIds.length) {
               dispatch(setChatsData({chatsData}));
               setIsLoading(false);
             }
           }
+        });
+
+        const messagesRef = child(dbRef, `messages/${chatId}`);
+        refs.push(messagesRef);
+        onValue(messagesRef, messageSnapshot => {
+          const messagesData = messageSnapshot.val();
+          dispatch(setChatsMessages({chatId, messagesData}));
         });
 
         if (chatFoundCount == 0) {

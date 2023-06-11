@@ -23,7 +23,7 @@ import {COLORS} from '../../Theme/Colors';
 import {useSelector} from 'react-redux';
 import Bubble from '../../Components/Bubble';
 import PageContainer from '../../Components/PageContainer';
-import {createChat} from '../../Utils/Action/ChatAction';
+import {createChat, sendTextMessage} from '../../Utils/Action/ChatAction';
 
 // create a component
 const Chat = props => {
@@ -31,6 +31,7 @@ const Chat = props => {
   const [ChatId, setChatId] = useState(props.route?.params?.chatId);
   const UserData = useSelector(state => state.auth.userData);
   const storedUsers = useSelector(state => state.users.storedUsers);
+  const chatMessages = useSelector(state => state.messages.messagesData); 
   const storedChats = useSelector(state => state.chats.chatsData);
   const chatData =
     (ChatId && storedChats[ChatId]) || props.route?.params?.newChatData;
@@ -62,6 +63,8 @@ const Chat = props => {
         setChatId(id);
         //No chat Id. Create the chat
       }
+
+      await sendTextMessage(ChatId, UserData.userId, MessageText);
     } catch (error) {
       console.log('error ocurred while sending message', error);
     }
