@@ -2,10 +2,8 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import React from 'react';
 import {ScreenName} from '../Constants/ScreenName';
-import {Chat, ChatList, Settings} from '../Screen';
-import ChatRoutes from './AppRoutes';
+import {ChatList, Settings} from '../Screen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Zocial from 'react-native-vector-icons/Zocial';
 
 const TabRoutes = () => {
   const Tab = createBottomTabNavigator();

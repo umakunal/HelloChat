@@ -31,7 +31,10 @@ const Chat = props => {
   const [ChatId, setChatId] = useState(props.route?.params?.chatId);
   const UserData = useSelector(state => state.auth.userData);
   const storedUsers = useSelector(state => state.users.storedUsers);
-  const chatData = props.route?.params?.newChatData;
+  const storedChats = useSelector(state => state.chats.chatsData);
+  const chatData =
+    (ChatId && storedChats[ChatId]) || props.route?.params?.newChatData;
+
   const [ChatUser, setChatUser] = useState([]);
 
   const getChatTileFromName = () => {

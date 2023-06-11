@@ -1,19 +1,19 @@
 import {NavigationContainer} from '@react-navigation/native';
 import React from 'react';
-import {Auth, ChatSettings} from '../Screen';
-import AppRoutes from './AppRoutes';
+import {Auth} from '../Screen';
+import ChatRoutes from './ChatRoutes';
 import {useSelector} from 'react-redux';
-import StartUp from '../Screen/StartUp';
+import StartUp from '../Screen/StartUp/index'
 
 const MainRouter = () => {
   const isAuth = useSelector(
     state => state.auth.token !== null && state.auth.token !== '',
   );
   const didTryAutoLogin = useSelector(state => state.auth.setDidTryAutoLogin);
-  console.log('didTryAutoLogin', didTryAutoLogin)
+  console.log('didTryAutoLogin', didTryAutoLogin);
   return (
     <NavigationContainer>
-      {isAuth && <AppRoutes />}
+      {isAuth && <ChatRoutes />}
       {!isAuth && didTryAutoLogin && <Auth />}
       {!isAuth && !didTryAutoLogin && <StartUp />}
     </NavigationContainer>

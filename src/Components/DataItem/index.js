@@ -13,7 +13,6 @@ import {Fonts} from '../../Theme/Fonts';
 // create a component
 const DataItem = props => {
   const {title, subTitle, image, onPress} = props;
-  console.log('Image uri', image);
   return (
     <TouchableWithoutFeedback
       onPress={() => {
