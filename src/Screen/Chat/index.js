@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  FlatList,
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -31,12 +32,26 @@ const Chat = props => {
   const [ChatId, setChatId] = useState(props.route?.params?.chatId);
   const UserData = useSelector(state => state.auth.userData);
   const storedUsers = useSelector(state => state.users.storedUsers);
-  const chatMessages = useSelector(state => state.messages.messagesData); 
+  const [ChatUser, setChatUser] = useState([]);
+  const [ErrorBannerText, setErrorBannerText] = useState('');
+  const chatMessages = useSelector(state => {
+    if (!ChatId) return [];
+    const chatMessagesData = state.messages.messagesData[ChatId];
+    if (!chatMessagesData) return [];
+    const messageList = [];
+    for (const key in chatMessagesData) {
+      const message = chatMessagesData[key];
+      messageList.push({
+        key,
+        ...message,
+      });
+    }
+    return messageList;
+  });
+  console.log('chatMessages', chatMessages);
   const storedChats = useSelector(state => state.chats.chatsData);
   const chatData =
     (ChatId && storedChats[ChatId]) || props.route?.params?.newChatData;
-
-  const [ChatUser, setChatUser] = useState([]);
 
   const getChatTileFromName = () => {
     const otherUserId = ChatUser.find(uid => uid !== UserData.userId);
@@ -65,11 +80,14 @@ const Chat = props => {
       }
 
       await sendTextMessage(ChatId, UserData.userId, MessageText);
+      setMessageText('');
     } catch (error) {
       console.log('error ocurred while sending message', error);
+      setErrorBannerText('Message failed to send.');
+      setTimeout(() => {
+        setErrorBannerText('');
+      }, 5000);
     }
-
-    setMessageText('');
   }, [MessageText, ChatId]);
   return (
     <SafeAreaView edges={['bottom', 'left', 'right']} style={styles.container}>
@@ -78,11 +96,31 @@ const Chat = props => {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={100}>
         <ImageBackground
-          source={ImagePath.background}
+          source={ImagePath.background2}
           style={styles.backgroundImage}>
           <PageContainer style={{backgroundColor: 'transparent'}}>
             {!ChatId && (
               <Bubble text={'This is new chat. Say Hi'} type={'system'} />
+            )}
+            {ErrorBannerText !== '' && (
+              <Bubble text={ErrorBannerText} type={'error'} />
+            )}
+
+            {ChatId && (
+              <FlatList
+                data={chatMessages}
+                keyExtractor={item => item.key}
+                renderItem={itemData => {
+                  const message = itemData?.item;
+                  const isOwnMessage = message.sentBy === UserData.userId;
+                  const messageType = isOwnMessage
+                    ? 'myMessage'
+                    : 'theirMessage';
+                    console.log('isOwnMessage', isOwnMessage)
+                  console.log('itemData', itemData);
+                  return <Bubble type={messageType} text={message.text} />;
+                }}
+              />
             )}
           </PageContainer>
         </ImageBackground>

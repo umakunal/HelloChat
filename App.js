@@ -7,6 +7,7 @@ import MainRouter from './src/Router/Router';
 import {Provider} from 'react-redux';
 import {store} from './src/store/store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {MenuProvider} from 'react-native-popup-menu';
 
 // create a component
 LogBox.ignoreLogs(['AsyncStorage has been extracted from react-native']);
@@ -18,7 +19,9 @@ const App = () => {
   }, []);
   return (
     <Provider store={store}>
-      <MainRouter />
+      <MenuProvider>
+        <MainRouter />
+      </MenuProvider>
     </Provider>
   );
 };

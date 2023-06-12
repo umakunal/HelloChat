@@ -1,9 +1,15 @@
 //import liraries
 import React, {Component} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import {Fonts} from '../../Theme/Fonts';
 import {COLORS} from '../../Theme/Colors';
-import {moderateScale, verticalScale} from '../../Theme/Dimentions';
+import {fullWidth, moderateScale, verticalScale} from '../../Theme/Dimentions';
 
 // create a component
 const Bubble = props => {
@@ -11,6 +17,8 @@ const Bubble = props => {
 
   const bubbleStyle = {...styles.container};
   const textStyle = {...styles.text};
+  const wrapperStyle = {...styles.wrapper};
+  let Container = View;
 
   switch (type) {
     case 'system':
@@ -19,16 +27,39 @@ const Bubble = props => {
       bubbleStyle.alignItems = 'center';
       bubbleStyle.marginTop = verticalScale(10);
       break;
+    case 'error':
+      textStyle.color = COLORS.white;
+      bubbleStyle.backgroundColor = COLORS.red2;
+      bubbleStyle.alignItems = 'center';
+      bubbleStyle.marginTop = verticalScale(10);
+      break;
+    case 'myMessage':
+      wrapperStyle.justifyContent = 'flex-end';
+      bubbleStyle.backgroundColor = '#ffefc7';
+      bubbleStyle.maxWidth = fullWidth * 0.9;
+      Container = TouchableWithoutFeedback;
+      break;
+    case 'theirMessage':
+      wrapperStyle.justifyContent = 'flex-start';
+      bubbleStyle.maxWidth = fullWidth * 0.9;
+      Container = TouchableWithoutFeedback;
+      break;
 
     default:
       break;
   }
 
   return (
-    <View style={styles.wrapper}>
-      <View style={bubbleStyle}>
-        <Text style={textStyle}>{text}</Text>
-      </View>
+    <View style={wrapperStyle}>
+      <Container
+        onLongPress={() => {
+          console.warn('This is message');
+        }}
+        style={{width: fullWidth*0.90}}>
+        <View style={bubbleStyle}>
+          <Text style={textStyle}>{text}</Text>
+        </View>
+      </Container>
     </View>
   );
 };
@@ -50,6 +81,7 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: Fonts.regular,
     letterSpacing: 0.3,
+    color:COLORS.textColor
   },
 });
 
