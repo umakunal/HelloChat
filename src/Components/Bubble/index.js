@@ -9,7 +9,12 @@ import {
 } from 'react-native';
 import {Fonts} from '../../Theme/Fonts';
 import {COLORS} from '../../Theme/Colors';
-import {fullWidth, moderateScale, verticalScale} from '../../Theme/Dimentions';
+import {
+  fullWidth,
+  horizontalScale,
+  moderateScale,
+  verticalScale,
+} from '../../Theme/Dimentions';
 import {
   Menu,
   MenuOptions,
@@ -21,8 +26,20 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import {async} from 'validate.js';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {starMEssage} from '../../Utils/Action/ChatAction';
+import {useSelector} from 'react-redux';
 
 // create a component
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  var hours = date.getHours();
+  var minutes = date.getMinutes();
+  var ampm = hours >= 12 ? 'pm' : 'am';
+  hours = hours % 12;
+  hours = hours ? hours : 12; // the hour '0' should be '12'
+  minutes = minutes < 10 ? '0' + minutes : minutes;
+  return hours + ':' + minutes + ' ' + ampm;
+}
 
 const MenuItem = props => {
   const Icon = props.iconPack ?? Feather;
@@ -37,14 +54,19 @@ const MenuItem = props => {
 };
 
 const Bubble = props => {
-  const {text, type} = props;
+  const {text, type, messageId, userId, chatId, date} = props;
+  const starredMessages = useSelector(
+    state => state.messages.starredMessage[chatId] ?? {},
+  );
+  console.log('date==>', date);
   const menuRef = useRef(null);
   const id = useRef(uuid.v4());
   const bubbleStyle = {...styles.container};
   const textStyle = {...styles.text};
   const wrapperStyle = {...styles.wrapper};
   let Container = View;
-
+  let isUserMessage = false;
+  const dateString = formatDate(date);
   switch (type) {
     case 'system':
       textStyle.color = '#65644A';
@@ -60,12 +82,14 @@ const Bubble = props => {
       break;
     case 'myMessage':
       wrapperStyle.justifyContent = 'flex-end';
+      isUserMessage = true;
       bubbleStyle.backgroundColor = '#ffefc7';
       bubbleStyle.maxWidth = fullWidth * 0.9;
       Container = TouchableWithoutFeedback;
       break;
     case 'theirMessage':
       wrapperStyle.justifyContent = 'flex-start';
+      isUserMessage = false;
       bubbleStyle.maxWidth = fullWidth * 0.9;
       Container = TouchableWithoutFeedback;
       break;
@@ -81,6 +105,8 @@ const Bubble = props => {
       console.log('error occured while copying text to clipboard', error);
     }
   };
+
+  const isStarred = isUserMessage && starredMessages[messageId] !== undefined;
   return (
     <View style={wrapperStyle}>
       <Container
@@ -91,6 +117,20 @@ const Bubble = props => {
         style={{width: fullWidth * 0.9}}>
         <View style={bubbleStyle}>
           <Text style={textStyle}>{text}</Text>
+          {dateString && (
+            <View style={styles.timeContainer}>
+              {isStarred ? (
+                <FontAwesome
+                  name="star"
+                  size={18}
+                  color={COLORS.primary}
+                  style={{marginRight: horizontalScale(5)}}
+                />
+              ) : null}
+              <Text style={styles.time}>{dateString}</Text>
+            </View>
+          )}
+
           <Menu name={id.current} ref={menuRef}>
             <MenuTrigger />
             <MenuOptions>
@@ -102,11 +142,14 @@ const Bubble = props => {
                 }}
               />
               <MenuItem
-                icon={'star-o'}
+                icon={isStarred ? 'star' : 'star-o'}
                 iconPack={FontAwesome}
-                text="Start Message"
+                text={`${isStarred ? 'Unstar' : 'Star'} message`}
                 onSelect={() => {
-                  copyToClipboaard(text);
+                  console.log('messageId', messageId);
+                  console.log('chatId', chatId);
+                  console.log('userId', userId);
+                  starMEssage(userId, chatId, messageId);
                 }}
               />
             </MenuOptions>
@@ -143,6 +186,16 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: Fonts.regular,
     letterSpacing: 0.3,
+    fontSize: moderateScale(12),
+  },
+  timeContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+  time: {
+    fontFamily: Fonts.regular,
+    letterSpacing: 0.3,
+    color: COLORS.grey,
     fontSize: moderateScale(12),
   },
 });
