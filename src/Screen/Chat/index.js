@@ -25,6 +25,7 @@ import {useSelector} from 'react-redux';
 import Bubble from '../../Components/Bubble';
 import PageContainer from '../../Components/PageContainer';
 import {createChat, sendTextMessage} from '../../Utils/Action/ChatAction';
+import ReplyTo from '../../Components/ReplyTo';
 
 // create a component
 const Chat = props => {
@@ -34,6 +35,7 @@ const Chat = props => {
   const storedUsers = useSelector(state => state.users.storedUsers);
   const [ChatUser, setChatUser] = useState([]);
   const [ErrorBannerText, setErrorBannerText] = useState('');
+  const [replyingTo, setReplyingTo] = useState();
   const chatMessages = useSelector(state => {
     if (!ChatId) return [];
     const chatMessagesData = state.messages.messagesData[ChatId];
@@ -79,8 +81,14 @@ const Chat = props => {
         //No chat Id. Create the chat
       }
 
-      await sendTextMessage(ChatId, UserData.userId, MessageText);
+      await sendTextMessage(
+        ChatId,
+        UserData.userId,
+        MessageText,
+        replyingTo && replyingTo.key,
+      );
       setMessageText('');
+      setReplyingTo(null);
     } catch (error) {
       console.log('error ocurred while sending message', error);
       setErrorBannerText('Message failed to send.');
@@ -122,14 +130,26 @@ const Chat = props => {
                       text={message.text}
                       messageId={message.key}
                       userId={UserData.userId}
-                      chatId = {ChatId}
-                      date = {message.sendAt}
+                      chatId={ChatId}
+                      date={message.sendAt}
+                      setReply={() => setReplyingTo(message)}
+                      replyingTo={
+                        message.replyTo &&
+                        chatMessages.find(i => i.key === message.replyTo)
+                      }
                     />
                   );
                 }}
               />
             )}
           </PageContainer>
+          {replyingTo && (
+            <ReplyTo
+              text={replyingTo.text}
+              user={storedUsers[replyingTo.sentBy]}
+              onCancel={() => setReplyingTo(null)}
+            />
+          )}
         </ImageBackground>
         <View style={styles.inputContainer}>
           <TouchableOpacity style={styles.mediaButton} onPress={() => {}}>

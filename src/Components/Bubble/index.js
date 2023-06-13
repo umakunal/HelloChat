@@ -54,10 +54,22 @@ const MenuItem = props => {
 };
 
 const Bubble = props => {
-  const {text, type, messageId, userId, chatId, date} = props;
+  const {
+    text,
+    type,
+    messageId,
+    userId,
+    chatId,
+    date,
+    setReply,
+    replyingTo,
+    name,
+  } = props;
   const starredMessages = useSelector(
     state => state.messages.starredMessage[chatId] ?? {},
   );
+
+  const storedUser = useSelector(state => state.users.storedUsers);
   console.log('date==>', date);
   const menuRef = useRef(null);
   const id = useRef(uuid.v4());
@@ -66,7 +78,7 @@ const Bubble = props => {
   const wrapperStyle = {...styles.wrapper};
   let Container = View;
   let isUserMessage = false;
-  const dateString = formatDate(date);
+  const dateString = date && formatDate(date);
   switch (type) {
     case 'system':
       textStyle.color = '#65644A';
@@ -88,12 +100,15 @@ const Bubble = props => {
       Container = TouchableWithoutFeedback;
       break;
     case 'theirMessage':
+      bubbleStyle.backgroundColor = '#ffe7d6';
       wrapperStyle.justifyContent = 'flex-start';
       isUserMessage = false;
       bubbleStyle.maxWidth = fullWidth * 0.9;
       Container = TouchableWithoutFeedback;
       break;
 
+    case 'reply':
+      bubbleStyle.backgroundColor = '#f2f2f2';
     default:
       break;
   }
@@ -107,6 +122,7 @@ const Bubble = props => {
   };
 
   const isStarred = isUserMessage && starredMessages[messageId] !== undefined;
+  const replyingToUser = replyingTo && storedUser[replyingTo.sentBy];
   return (
     <View style={wrapperStyle}>
       <Container
@@ -116,6 +132,14 @@ const Bubble = props => {
         }}
         style={{width: fullWidth * 0.9}}>
         <View style={bubbleStyle}>
+          {name && <Text style={styles.name}>{name}</Text>}
+          {replyingToUser && (
+            <Bubble
+              type="reply"
+              text={replyingTo.text}
+              name={`${replyingToUser.firstName} ${replyingToUser.lastName}`}
+            />
+          )}
           <Text style={textStyle}>{text}</Text>
           {dateString && (
             <View style={styles.timeContainer}>
@@ -151,6 +175,11 @@ const Bubble = props => {
                   console.log('userId', userId);
                   starMEssage(userId, chatId, messageId);
                 }}
+              />
+              <MenuItem
+                icon={'arrow-left-circle'}
+                text="Reply"
+                onSelect={setReply}
               />
             </MenuOptions>
           </Menu>
@@ -197,6 +226,10 @@ const styles = StyleSheet.create({
     letterSpacing: 0.3,
     color: COLORS.grey,
     fontSize: moderateScale(12),
+  },
+  name: {
+    fontFamily: Fonts.medium,
+    letterSpacing: 0.3,
   },
 });
 
