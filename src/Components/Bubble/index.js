@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   TouchableWithoutFeedback,
+  Image,
 } from 'react-native';
 import {Fonts} from '../../Theme/Fonts';
 import {COLORS} from '../../Theme/Colors';
@@ -64,6 +65,7 @@ const Bubble = props => {
     setReply,
     replyingTo,
     name,
+    imageUrl,
   } = props;
   const starredMessages = useSelector(
     state => state.messages.starredMessage[chatId] ?? {},
@@ -140,7 +142,9 @@ const Bubble = props => {
               name={`${replyingToUser.firstName} ${replyingToUser.lastName}`}
             />
           )}
-          <Text style={textStyle}>{text}</Text>
+          {!imageUrl && <Text style={textStyle}>{text}</Text>}
+
+          {imageUrl && <Image source={{uri: imageUrl}} style={styles.image} />}
           {dateString && (
             <View style={styles.timeContainer}>
               {isStarred ? (
@@ -230,6 +234,11 @@ const styles = StyleSheet.create({
   name: {
     fontFamily: Fonts.medium,
     letterSpacing: 0.3,
+  },
+  image: {
+    width: moderateScale(200),
+    height: moderateScale(200),
+    marginBottom: verticalScale(5),
   },
 });
 

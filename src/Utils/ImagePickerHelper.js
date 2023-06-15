@@ -22,6 +22,19 @@ export const launchImagePicker = async () => {
   });
   return result.path;
 };
+export const openCamera = async () => {
+  await checkMediaPermission();
+  const result = await ImagePicker.openCamera({
+    path: 'my-file-path.jpg',
+    width: 300,
+    height: 400,
+    compressImageQuality: 0.8,
+  }).then(image => {
+    console.log('Selected Image===>', image);
+    return image;
+  });
+  return result.path;
+};
 
 const checkMediaPermission = async () => {
   if (Platform.OS === 'android') {
@@ -47,13 +60,13 @@ const checkMediaPermission = async () => {
   }
 };
 
-export const uploadImageAsync = async uri => {
+export const uploadImageAsync = async (uri, isChatImage = false) => {
   // console.log('Image uri', uri);
   let Imageuri = uri;
   const filename = Imageuri.substring(Imageuri.lastIndexOf('/') + 1);
   const uploadUri =
     Platform.OS === 'ios' ? Imageuri.replace('file://', '') : Imageuri;
- 
+
   // return;
   const app = getFirebaseApp();
   const blob = await new Promise((resolve, reject) => {
@@ -70,7 +83,7 @@ export const uploadImageAsync = async uri => {
     xhr.open('GET', Imageuri, true);
     xhr.send(null);
   });
-  const pathFolder = 'profilePics';
+  const pathFolder = isChatImage ? `chatImages` : 'profilePics';
   const StorageRef = ref(getStorage(app), `${pathFolder}/${uuid.v4()}`);
   await uploadBytesResumable(StorageRef, blob);
   blob.close();
