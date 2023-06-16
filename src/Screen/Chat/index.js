@@ -52,7 +52,7 @@ const Chat = props => {
   const [tempImageUri, setTempImageUri] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const flatList = useRef();
-
+  console.log('ChatUser', ChatUser);
   const chatMessages = useSelector(state => {
     if (!ChatId) return [];
     const chatMessagesData = state.messages.messagesData[ChatId];
@@ -79,9 +79,11 @@ const Chat = props => {
       otherUserData && `${otherUserData.firstName} ${otherUserData.lastName}`
     );
   };
+
+  const title = chatData.chatName ?? getChatTileFromName();
   useEffect(() => {
     props.navigation.setOptions({
-      headerTitle: getChatTileFromName(),
+      headerTitle: title,
     });
     setChatUser(chatData.users);
   }, [ChatUser]);
@@ -99,7 +101,7 @@ const Chat = props => {
       }
 
       await sendTextMessage(
-        ChatId,
+        id,
         UserData.userId,
         MessageText,
         replyingTo && replyingTo.key,
@@ -180,6 +182,8 @@ const Chat = props => {
 
             {ChatId && (
               <FlatList
+                showsVerticalScrollIndicator={false}
+                f
                 ref={ref => (flatList.current = ref)}
                 onContentSizeChange={() =>
                   flatList.current.scrollToEnd({animated: false})
@@ -193,6 +197,10 @@ const Chat = props => {
                   const messageType = isOwnMessage
                     ? 'myMessage'
                     : 'theirMessage';
+
+                  const sender = message.sentBy && storedUsers[message.sentBy];
+                  const name =
+                    sender && `${sender.firstName} ${sender.lastName}`;
                   return (
                     <Bubble
                       type={messageType}
@@ -200,6 +208,9 @@ const Chat = props => {
                       messageId={message.key}
                       userId={UserData.userId}
                       chatId={ChatId}
+                      name={
+                        !chatData.isGroupChat || isOwnMessage ? undefined : name
+                      }
                       date={message.sendAt}
                       setReply={() => setReplyingTo(message)}
                       replyingTo={

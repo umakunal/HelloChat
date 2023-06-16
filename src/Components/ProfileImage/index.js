@@ -10,6 +10,7 @@ import {
 import {ImagePath} from '../../Theme/ImagePath';
 import {moderateScale, verticalScale} from '../../Theme/Dimentions';
 import Entypo from 'react-native-vector-icons/Entypo';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import {COLORS} from '../../Theme/Colors';
 import {
   launchImagePicker,
@@ -28,6 +29,8 @@ const ProfileImage = props => {
   const [image, setImage] = useState(source);
   const [isLoading, setIsLoading] = useState(false);
   const showEditButton = props.showEditButton && props.showEditButton === true;
+  const showRemoveButton =
+    props.showRemoveButton && props.showRemoveButton === true;
 
   const userId = props.userId;
 
@@ -58,10 +61,10 @@ const ProfileImage = props => {
     }
   };
 
-  const Container = showEditButton ? TouchableOpacity : View;
+  const Container = props.onPress || showEditButton ? TouchableOpacity : View;
 
   return (
-    <Container onPress={pickImage}>
+    <Container style={props.style} onPress={props.onPress || pickImage}>
       {isLoading ? (
         <View
           height={props.size}
@@ -79,6 +82,11 @@ const ProfileImage = props => {
       {showEditButton && !isLoading && (
         <View style={styles.editIconContainer}>
           <Entypo name="edit" size={18} color={COLORS.primary} />
+        </View>
+      )}
+      {showRemoveButton && !isLoading && (
+        <View style={styles.removeIconContainer}>
+          <AntDesign name="close" size={15} color={COLORS.black} />
         </View>
       )}
     </Container>
@@ -104,6 +112,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  removeIconContainer: {
+    position: 'absolute',
+    bottom: -3,
+    right: -3,
+    backgroundColor: COLORS.lightGrey,
+    borderRadius: 20,
+    padding: 3
+},
 });
 
 export default ProfileImage;

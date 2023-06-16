@@ -9,10 +9,11 @@ import {
 } from '../../Theme/Dimentions';
 import {COLORS} from '../../Theme/Colors';
 import {Fonts} from '../../Theme/Fonts';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 // create a component
 const DataItem = props => {
-  const {title, subTitle, image, onPress} = props;
+  const {title, subTitle, image, onPress, type, isChecked} = props;
   return (
     <TouchableWithoutFeedback
       onPress={() => {
@@ -28,6 +29,16 @@ const DataItem = props => {
             {subTitle}
           </Text>
         </View>
+
+        {type === 'chatBox' && (
+          <View
+            style={{
+              ...styles.iconContainer,
+              ...(isChecked && styles.checkedStyle),
+            }}>
+            <Ionicons name="checkmark" size={18} color={COLORS.white} />
+          </View>
+        )}
       </View>
     </TouchableWithoutFeedback>
   );
@@ -44,6 +55,7 @@ const styles = StyleSheet.create({
     minHeight: verticalScale(50),
   },
   textContainer: {
+    flex: 1,
     marginLeft: horizontalScale(14),
   },
   title: {
@@ -55,6 +67,16 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.regular,
     color: COLORS.grey,
     letterSpacing: 0.3,
+  },
+  iconContainer: {
+    borderWidth: 1,
+    borderRadius: 50,
+    borderColor: COLORS.lightGrey,
+    backgroundColor: COLORS.white,
+  },
+  checkedStyle: {
+    backgroundColor: COLORS.primary,
+    borderColor: 'transparent',
   },
 });
 
