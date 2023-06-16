@@ -102,7 +102,7 @@ const Bubble = props => {
       Container = TouchableWithoutFeedback;
       break;
     case 'theirMessage':
-      bubbleStyle.backgroundColor = '#ffe7d6';
+      bubbleStyle.backgroundColor = '#fff';
       wrapperStyle.justifyContent = 'flex-start';
       isUserMessage = false;
       bubbleStyle.maxWidth = fullWidth * 0.9;
