@@ -95,7 +95,9 @@ const Chat = props => {
               iconName="settings-outline"
               onPress={() =>
                 chatData.isGroupChat
-                  ? props.navigation.navigate('')
+                  ? props.navigation.navigate(ScreenName.chatSettings, {
+                      chatId: ChatId,
+                    })
                   : props.navigation.navigate(ScreenName.contact, {
                       uid: ChatUser.find(uid => uid !== UserData.userId),
                     })
@@ -106,7 +108,7 @@ const Chat = props => {
       },
     });
     setChatUser(chatData.users);
-  }, [ChatUser]);
+  }, [ChatUser, title]);
 
   // console.log('ChatData', chatData);
 

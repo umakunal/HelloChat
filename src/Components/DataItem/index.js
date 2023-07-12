@@ -10,24 +10,38 @@ import {
 import {COLORS} from '../../Theme/Colors';
 import {Fonts} from '../../Theme/Fonts';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 // create a component
+const imageSize = 40;
 const DataItem = props => {
-  const {title, subTitle, image, onPress, type, isChecked} = props;
+  const {title, subTitle, image, onPress, type, isChecked, icon} = props;
   return (
     <TouchableWithoutFeedback
       onPress={() => {
         onPress();
       }}>
       <View style={styles.container}>
-        <ProfileImage uri={image} size={40} />
+        {!icon && <ProfileImage uri={image} size={imageSize} />}
+        {icon && (
+          <View style={styles.leftIconContainer}>
+            <AntDesign name={icon} size={20} color={COLORS.secondary} />
+          </View>
+        )}
         <View style={styles.textContainer}>
-          <Text numberOfLines={1} style={styles.title}>
+          <Text
+            numberOfLines={1}
+            style={[
+              styles.title,
+              {color: type === 'button' ? COLORS.secondary : COLORS.textColor},
+            ]}>
             {title}
           </Text>
-          <Text numberOfLines={1} style={styles.subTitle}>
-            {subTitle}
-          </Text>
+          {subTitle && (
+            <Text numberOfLines={1} style={styles.subTitle}>
+              {subTitle}
+            </Text>
+          )}
         </View>
 
         {type === 'chatBox' && (
@@ -58,6 +72,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     alignItems: 'center',
     minHeight: verticalScale(50),
+    marginLeft: horizontalScale(5),
   },
   textContainer: {
     flex: 1,
@@ -82,6 +97,14 @@ const styles = StyleSheet.create({
   checkedStyle: {
     backgroundColor: COLORS.primary,
     borderColor: 'transparent',
+  },
+  leftIconContainer: {
+    backgroundColor: COLORS.secondaryLight,
+    borderRadius: moderateScale(50),
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: imageSize,
+    width: imageSize,
   },
 });
 

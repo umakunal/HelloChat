@@ -11,7 +11,7 @@ import {COLORS} from '../../Theme/Colors';
 import {getUserChats} from '../../Utils/Action/userAction';
 import {async} from 'validate.js';
 import DataItem from '../../Components/DataItem';
-import { ScreenName } from '../../Constants/ScreenName';
+import {ScreenName} from '../../Constants/ScreenName';
 
 // create a component
 const Contact = props => {
@@ -60,13 +60,14 @@ const Contact = props => {
                 key={cid}
                 title={chatData.chatName}
                 subTitle={chatData.latestMessagetText}
-                type = "link"
+                type="link"
                 onPress={() => {
                   props.navigation.push(ScreenName.chat, {
                     chatId: cid,
                     // newChatData: chatData,
                   });
                 }}
+                image={chatData.chatImage}
               />
             );
           })}

@@ -106,6 +106,7 @@ const ChatList = props => {
           let image = '';
           if (isGroupChat) {
             title = chatData.chatName;
+            image = chatData.chatImage;
           } else {
             const otherUserID = chatData.users.find(
               uuid => uuid !== userData.userId,

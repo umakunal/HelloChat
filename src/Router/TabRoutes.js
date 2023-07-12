@@ -4,12 +4,18 @@ import React from 'react';
 import {ScreenName} from '../Constants/ScreenName';
 import {ChatList, Settings} from '../Screen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { COLORS } from '../Theme/Colors';
 
 const TabRoutes = () => {
   const Tab = createBottomTabNavigator();
   return (
     <Tab.Navigator
-      screenOptions={{headerTitle: '', headerShadowVisible: false}}>
+      screenOptions={{
+        headerTitle: '',
+        headerShadowVisible: false,
+        tabBarActiveTintColor: COLORS.primary,
+        tabBarInactiveTintColor: COLORS.grey,
+      }}>
       <Tab.Screen
         name={ScreenName.chatList}
         component={ChatList}

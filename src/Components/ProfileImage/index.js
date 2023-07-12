@@ -20,6 +20,7 @@ import {useState} from 'react';
 import {updateSignedInUserData} from '../../Utils/Action/AuthActions';
 import {useDispatch} from 'react-redux';
 import {updateLoggrdInUserData} from '../../store/authSlice';
+import {updateChatData} from '../../Utils/Action/ChatAction';
 
 const ProfileImage = props => {
   const dispatch = useDispatch();
@@ -33,6 +34,7 @@ const ProfileImage = props => {
     props.showRemoveButton && props.showRemoveButton === true;
 
   const userId = props.userId;
+  const chatId = props.chatId;
 
   const pickImage = async () => {
     try {
@@ -42,17 +44,21 @@ const ProfileImage = props => {
 
       // Upload the image
       setIsLoading(true);
-      const uploadUrl = await uploadImageAsync(tempUri);
+      const uploadUrl = await uploadImageAsync(tempUri, chatId !== undefined);
       setIsLoading(false);
 
       if (!uploadUrl) {
         throw new Error('Could not upload image');
       }
 
-      const newData = {profilePicture: uploadUrl};
+      if (chatId) {
+        await updateChatData(chatId, userId, {chatImage: uploadUrl});
+      } else {
+        const newData = {profilePicture: uploadUrl};
 
-      await updateSignedInUserData(userId, newData);
-      dispatch(updateLoggrdInUserData({newData}));
+        await updateSignedInUserData(userId, newData);
+        dispatch(updateLoggrdInUserData({newData}));
+      }
 
       setImage({uri: uploadUrl});
     } catch (error) {
@@ -118,8 +124,8 @@ const styles = StyleSheet.create({
     right: -3,
     backgroundColor: COLORS.lightGrey,
     borderRadius: 20,
-    padding: 3
-},
+    padding: 3,
+  },
 });
 
 export default ProfileImage;

@@ -121,7 +121,8 @@ const ChatRoutes = () => {
           name={ScreenName.chatSettings}
           component={ChatSettings}
           options={{
-            headerTitle: 'Chat Sttings',
+            headerTitle: '',
+            headerShadowVisible: false,
           }}
         />
         <Stack.Screen
