@@ -72,7 +72,7 @@ const Bubble = props => {
   );
 
   const storedUser = useSelector(state => state.users.storedUsers);
-  console.log('date==>', date);
+  // console.log('date==>', date);
   const menuRef = useRef(null);
   const id = useRef(uuid.v4());
   const bubbleStyle = {...styles.container};

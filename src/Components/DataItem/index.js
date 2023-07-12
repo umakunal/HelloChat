@@ -39,6 +39,11 @@ const DataItem = props => {
             <Ionicons name="checkmark" size={18} color={COLORS.white} />
           </View>
         )}
+        {type === 'link' && (
+          <View>
+            <Ionicons name="chevron-forward" size={18} color={COLORS.grey} />
+          </View>
+        )}
       </View>
     </TouchableWithoutFeedback>
   );

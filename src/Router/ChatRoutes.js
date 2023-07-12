@@ -1,7 +1,7 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React, {useEffect, useState} from 'react';
 import {ScreenName} from '../Constants/ScreenName';
-import {Chat, ChatSettings, NewChat} from '../Screen';
+import {Chat, ChatSettings, Contact, NewChat} from '../Screen';
 import TabRoutes from './TabRoutes';
 import {useDispatch, useSelector} from 'react-redux';
 import {getFirebaseApp} from '../Utils/FirebaseHelper';
@@ -122,6 +122,13 @@ const ChatRoutes = () => {
           component={ChatSettings}
           options={{
             headerTitle: 'Chat Sttings',
+          }}
+        />
+        <Stack.Screen
+          name={ScreenName.contact}
+          component={Contact}
+          options={{
+            headerTitle: 'Contact Info',
           }}
         />
       </Stack.Group>

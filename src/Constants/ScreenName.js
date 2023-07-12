@@ -9,5 +9,6 @@ export const ScreenName = {
     chatSettings: 'chatSettings',
     status: 'Status',
     newChat: 'NewChat',
+    contact: 'Contact',
   };
   

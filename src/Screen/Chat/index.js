@@ -39,6 +39,9 @@ import {
 } from '../../Utils/ImagePickerHelper';
 import AwesomeAlert from 'react-native-awesome-alerts';
 import {Fonts} from '../../Theme/Fonts';
+import {HeaderButtons, Item} from 'react-navigation-header-buttons';
+import CustomHeaderButton from '../../Components/CustomHeaderButton';
+import {ScreenName} from '../../Constants/ScreenName';
 
 // create a component
 const Chat = props => {
@@ -84,6 +87,23 @@ const Chat = props => {
   useEffect(() => {
     props.navigation.setOptions({
       headerTitle: title,
+      headerRight: () => {
+        return (
+          <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+            <Item
+              title="Chat Settings"
+              iconName="settings-outline"
+              onPress={() =>
+                chatData.isGroupChat
+                  ? props.navigation.navigate('')
+                  : props.navigation.navigate(ScreenName.contact, {
+                      uid: ChatUser.find(uid => uid !== UserData.userId),
+                    })
+              }
+            />
+          </HeaderButtons>
+        );
+      },
     });
     setChatUser(chatData.users);
   }, [ChatUser]);

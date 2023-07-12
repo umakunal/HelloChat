@@ -46,3 +46,16 @@ export const searchUser = async queryText => {
     throw error;
   }
 };
+
+export const getUserChats = async userId => {
+  try {
+    const app = getFirebaseApp();
+    const dbRef = ref(getDatabase(app)); 
+    const userChatsRef = child(dbRef, `usersChat/${userId}`);
+    const snapshot = await get(userChatsRef);
+    return snapshot.val();
+  } catch (error) {
+    console.log('error occured', error);
+  }
+};
+
